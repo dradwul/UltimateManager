@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using UltimateManager.Data;
+using UltimateManager.Data.Repositories;
 using UltimateManager.UI.Components;
 
 namespace UltimateManager.UI
@@ -14,8 +15,16 @@ namespace UltimateManager.UI
             builder.Services.AddRazorComponents()
                 .AddInteractiveServerComponents();
 
+            builder.Services.AddRazorPages();
+            builder.Services.AddServerSideBlazor(options =>
+            {
+                options.DetailedErrors = true;
+            });
+
             builder.Services.AddDbContext<UltimateManagerDbContext>(options =>
             options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+            builder.Services.AddScoped<PlayerRepository>();
 
             var app = builder.Build();
 

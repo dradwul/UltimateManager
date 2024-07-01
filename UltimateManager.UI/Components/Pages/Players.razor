@@ -1,0 +1,42 @@
+﻿@page "/players"
+@using UltimateManager.Data.Repositories
+@using UltimateManager.Domain.Models
+@inject PlayerRepository PlayerRepository
+
+<PageTitle>Players</PageTitle>
+
+<h1>Players</h1>
+
+@if(allPlayers == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <tr>
+            <th> Name </th>
+            <th> Age </th>
+            <th> Overall </th>
+            <th> Team </th>
+        </tr>
+        @foreach(var player in allPlayers)
+        {
+            <tr>
+                <td>@player.Name</td>
+                <td>@player.Age</td>
+                <td>@player.Overall</td>
+                <td>@player.Team?.Name</td>
+            </tr>
+        }
+    </table>
+}
+
+@code {
+    List<Player> allPlayers = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        allPlayers = await PlayerRepository.GetAllPlayersAsync();
+    }
+}
