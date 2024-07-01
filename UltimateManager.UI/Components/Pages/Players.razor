@@ -32,11 +32,44 @@ else
     </table>
 }
 
+<button class="btn btn-primary" @onclick="CreatePlayer">
+    @if (newPlayerButtonStatus)
+    {
+        <span> Cancel </span>
+    }
+    else
+    {
+        <span> New Player </span>
+    }
+</button>
+
+@if (newPlayerButtonStatus)
+{
+    <form>
+        <div class="form-control">
+            <label for="newPlayerName"> Name </label>
+            <input type="text" />
+            <br />
+            <label for="newPlayerTeam"> Team </label>
+            <select>
+                <option value="asdf"> asdf </option>
+            </select>
+        </div>
+    </form>
+}
+
+
 @code {
     List<Player> allPlayers = new();
+    private bool newPlayerButtonStatus = false;
 
     protected override async Task OnInitializedAsync()
     {
         allPlayers = await PlayerRepository.GetAllPlayersAsync();
+    }
+
+    private void CreatePlayer()
+    {
+        newPlayerButtonStatus = !newPlayerButtonStatus;
     }
 }
