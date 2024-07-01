@@ -1,4 +1,4 @@
-﻿namespace SimBox.Domain.Models
+﻿namespace UltimateManager.Domain.Models
 {
     public class TeamStats
     {
