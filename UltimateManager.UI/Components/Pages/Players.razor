@@ -2,6 +2,7 @@
 @using UltimateManager.Data.Repositories
 @using UltimateManager.Domain.Models
 @inject PlayerRepository PlayerRepository
+@inject TeamRepository TeamRepository
 
 <PageTitle>Players</PageTitle>
 
@@ -25,11 +26,15 @@
             <label for="newPlayerName"> Name </label>
             <input type="text" @bind-value="newPlayer.Name" />
             <br />
-            @*            <label for="newPlayerTeam"> Team </label>
-        <select>
-        <option value="asdf"> Teamname </option>
-        </select>
-        <br />*@
+            <label for="newPlayerTeam"> Team </label>
+            <select @bind="newPlayer.TeamId">
+                <option value=""> Select Team </option>
+                @foreach(var team in allTeams)
+                {
+                    <option value="@team.Id">@team.Name</option>
+                }
+            </select>
+            <br />
             <label for="newPlayerAge"> Age </label>
             <input type="number" @bind-value="newPlayer.Age" min="14" max="99" />
             <br />
@@ -53,6 +58,8 @@
     </table>
     <button class="btn btn-success" @onclick="SubmitNewPlayers">Submit All</button>
 }
+
+<hr />
 
 @if(allPlayers == null)
 {
@@ -84,6 +91,7 @@ else
 
 
 @code {
+    List<Team> allTeams = new();
     List<Player> allPlayers = new();
     List<Player> newPlayerList = new();
     Player newPlayer = new();
@@ -93,6 +101,7 @@ else
     protected override async Task OnInitializedAsync()
     {
         allPlayers = await PlayerRepository.GetAllPlayersAsync();
+        allTeams = (await TeamRepository.GetAllTeamsAsync()).OrderBy(t => t.Name).ToList();
     }
 
     private void CreatePlayer()
@@ -102,6 +111,14 @@ else
 
     private void AddToPlayerList()
     {
+        if (string.IsNullOrWhiteSpace(newPlayer.Name))
+        {
+            Console.WriteLine("Player name cannot be empty.");
+            return;
+        }
+
+        var selectedTeam = allTeams.FirstOrDefault(t => t.Id == newPlayer.TeamId);
+        newPlayer.Team = selectedTeam;
         newPlayerList.Add(newPlayer);
         newPlayer = new();
     }
@@ -125,6 +142,7 @@ else
     private async Task DeletePlayer(Player player)
     {
         await PlayerRepository.DeletePlayerAsync(player);
+        allPlayers = await PlayerRepository.GetAllPlayersAsync();
         StateHasChanged();
     }
 }
