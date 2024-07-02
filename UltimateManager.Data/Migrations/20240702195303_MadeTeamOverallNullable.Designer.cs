@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using UltimateManager.Data;
@@ -11,9 +12,11 @@ using UltimateManager.Data;
 namespace UltimateManager.Data.Migrations
 {
     [DbContext(typeof(UltimateManagerDbContext))]
-    partial class UltimateManagerDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240702195303_MadeTeamOverallNullable")]
+    partial class MadeTeamOverallNullable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -178,12 +181,6 @@ namespace UltimateManager.Data.Migrations
 
                     b.Property<int?>("Overall")
                         .HasColumnType("integer");
-
-                    b.Property<string>("PrimaryColor")
-                        .HasColumnType("text");
-
-                    b.Property<string>("SecondaryColor")
-                        .HasColumnType("text");
 
                     b.Property<int?>("TeamStatsId")
                         .HasColumnType("integer");

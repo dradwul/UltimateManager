@@ -7,6 +7,53 @@
 
 <h1>Players</h1>
 
+<button class="btn btn-primary" @onclick="CreatePlayer">
+    @if (newPlayerButtonStatus)
+    {
+        <span> Cancel </span>
+    }
+    else
+    {
+        <span> New Player </span>
+    }
+</button>
+
+@if (newPlayerButtonStatus)
+{
+    <form @onsubmit="HandleSubmit">
+        <div class="form-control">
+            <label for="newPlayerName"> Name </label>
+            <input type="text" @bind-value="newPlayer.Name" />
+            <br />
+            @*            <label for="newPlayerTeam"> Team </label>
+        <select>
+        <option value="asdf"> Teamname </option>
+        </select>
+        <br />*@
+            <label for="newPlayerAge"> Age </label>
+            <input type="number" @bind-value="newPlayer.Age" min="14" max="99" />
+            <br />
+            <button class="btn btn-success" @onclick="AddToPlayerList"> Add </button>
+        </div>
+    </form>
+}
+
+@if (newPlayerList != null && newPlayerButtonStatus)
+{
+    <h2>New Players</h2>
+    <table class="table">
+        @foreach (var player in newPlayerList)
+        {
+            <tr>
+                <td>@player.Name</td>
+                <td>@player.Age</td>
+                <td>@player.Team?.Name</td>
+            </tr>
+        }
+    </table>
+    <button class="btn btn-success" @onclick="SubmitNewPlayers">Submit All</button>
+}
+
 @if(allPlayers == null)
 {
     <p><em>Loading...</em></p>
@@ -27,40 +74,20 @@ else
                 <td>@player.Age</td>
                 <td>@player.Overall</td>
                 <td>@player.Team?.Name</td>
+                <td>
+                    <button class="btn btn-close" @onclick="() => DeletePlayer(player)"></button>
+                </td>
             </tr>
         }
     </table>
 }
 
-<button class="btn btn-primary" @onclick="CreatePlayer">
-    @if (newPlayerButtonStatus)
-    {
-        <span> Cancel </span>
-    }
-    else
-    {
-        <span> New Player </span>
-    }
-</button>
-
-@if (newPlayerButtonStatus)
-{
-    <form>
-        <div class="form-control">
-            <label for="newPlayerName"> Name </label>
-            <input type="text" />
-            <br />
-            <label for="newPlayerTeam"> Team </label>
-            <select>
-                <option value="asdf"> asdf </option>
-            </select>
-        </div>
-    </form>
-}
-
 
 @code {
     List<Player> allPlayers = new();
+    List<Player> newPlayerList = new();
+    Player newPlayer = new();
+
     private bool newPlayerButtonStatus = false;
 
     protected override async Task OnInitializedAsync()
@@ -71,5 +98,33 @@ else
     private void CreatePlayer()
     {
         newPlayerButtonStatus = !newPlayerButtonStatus;
+    }
+
+    private void AddToPlayerList()
+    {
+        newPlayerList.Add(newPlayer);
+        newPlayer = new();
+    }
+
+    private async Task HandleSubmit()
+    {
+        AddToPlayerList();
+        await Task.CompletedTask;
+    }
+
+    private async Task SubmitNewPlayers()
+    {
+        foreach(var player in newPlayerList)
+        {
+            await PlayerRepository.SavePlayerAsync(player);
+        }
+        newPlayerList.Clear();
+        allPlayers = await PlayerRepository.GetAllPlayersAsync();
+    }
+
+    private async Task DeletePlayer(Player player)
+    {
+        await PlayerRepository.DeletePlayerAsync(player);
+        StateHasChanged();
     }
 }

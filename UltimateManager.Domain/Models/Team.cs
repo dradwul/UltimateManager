@@ -4,7 +4,9 @@
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public int Overall { get; set; }
+        public string? PrimaryColor { get; set; }
+        public string? SecondaryColor { get; set; }
+        public int? Overall { get; set; }
         public int? CoachId { get; set; }
         public Coach? Coach { get; set; }
         public int? TeamStatsId { get; set; }

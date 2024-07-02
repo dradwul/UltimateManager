@@ -25,6 +25,7 @@ namespace UltimateManager.UI
             options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
             builder.Services.AddScoped<PlayerRepository>();
+            builder.Services.AddScoped<TeamRepository>();
 
             var app = builder.Build();
 

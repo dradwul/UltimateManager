@@ -17,5 +17,17 @@ namespace UltimateManager.Data.Repositories
                 .Include(p => p.Team)
                 .ToListAsync();
         }
+
+        public async Task SavePlayerAsync(Player player)
+        {
+            await _context.Players.AddAsync(player);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task DeletePlayerAsync(Player player)
+        {
+            _context.Remove(player);
+            await _context.SaveChangesAsync();
+        }
     }
 }

@@ -1,9 +1,94 @@
 ﻿@page "/teams"
+@using UltimateManager.Data.Repositories
+@using UltimateManager.Domain.Models
+@inject TeamRepository TeamRepository
 
 <PageTitle>Teams</PageTitle>
 
 <h1>Teams</h1>
 
-@code {
+<button class="btn btn-primary" @onclick="CreateTeam">
+	@if (newTeamButtonStatus)
+	{
+		<span> Cancel </span>
+	}
+	else
+	{
+		<span> New Team </span>
+	}
+</button>
 
+@if (newTeamButtonStatus)
+{
+	<form>
+		<div class="form-control">
+			<label for="newTeamName"> Team </label>
+			<input type="text" @bind-value="newTeam.Name" />
+			<br />
+			<label for="newTeamPrimaryColor"> Primary Color </label>
+			<input type="text" @bind-value="newTeam.PrimaryColor" />
+			<br />
+			<label for="newTeamSecondaryColor"> Secondary Color </label>
+			<input type="text" @bind-value="newTeam.SecondaryColor" />
+			<br />
+			<button class="btn btn-success" @onclick="AddTeam"> Save </button>
+		</div>
+	</form>
+}
+
+@if(allTeams == null)
+{
+	<p><em>Loading...</em></p>
+}
+else
+{
+	<table class="table">
+		<tr>
+			<th> Team </th>
+			<th> Color </th>
+			<th> Overall </th>
+		</tr>
+		@foreach(var team in allTeams)
+		{
+			<tr>
+				<td>@team.Name</td>
+				<td>@team.PrimaryColor / @team.SecondaryColor</td>
+				<td>@team.Overall</td>
+				<td>
+					<button class="btn btn-close" @onclick="() => DeleteTeam(team)"></button>
+				</td>
+			</tr>
+		}
+	</table>
+}
+
+
+@code {
+	List<Team> allTeams = new();
+	Team newTeam = new();
+
+	private bool newTeamButtonStatus = false;
+
+	protected override async Task OnInitializedAsync()
+	{
+		allTeams = await TeamRepository.GetAllTeamsAsync();
+	}
+
+	private void CreateTeam()
+	{
+		newTeamButtonStatus = !newTeamButtonStatus;
+	}
+
+	private async Task AddTeam()
+	{
+		await TeamRepository.SaveTeamAsync(newTeam);
+		newTeam = new();
+		StateHasChanged();
+	}
+
+	private async Task DeleteTeam(Team team)
+	{
+		await TeamRepository.DeleteTeamAsync(team);
+		StateHasChanged();
+	}
 }
