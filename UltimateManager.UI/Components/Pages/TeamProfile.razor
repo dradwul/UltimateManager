@@ -1,0 +1,55 @@
+﻿@page "/teams/{teamId:int}"
+@using UltimateManager.Data.Repositories
+@using UltimateManager.Domain.Models
+@inject TeamRepository TeamRepository
+
+<PageTitle>Team Details</PageTitle>
+
+<h3>Team Details</h3>
+
+@if (team == null)
+{
+	<p><em>Loading...</em></p>
+}
+else
+{
+	<div>
+		<h2>@team.Name</h2>
+		<p>Team ID: @team.Id</p>
+
+		<h3>Players</h3>
+		@if (team.Players == null || !team.Players.Any())
+		{
+			<p> No players associated to this team. </p>
+		}
+		else
+		{
+			<table class="table">
+				<tr>
+					<th>Name</th>
+					<th>Age</th>
+					<th>Overall</th>
+				</tr>
+				@foreach(var player in team.Players)
+				{
+					<tr>
+						<td>@player.FirstName @player.LastName</td>
+						<td>@player.Age</td>
+						<td>@player.Overall</td>
+					</tr>
+					
+				}
+			</table>
+		}
+	</div>
+}
+
+@code {
+	[Parameter] public int teamId { get; set; }
+	private Team team;
+
+	protected override async Task OnInitializedAsync()
+	{
+		team = await TeamRepository.GetTeamByIdAsync(teamId);
+	}
+}

@@ -23,6 +23,13 @@ namespace UltimateManager.Data.Repositories
                 .ToListAsync();
         }
 
+        public async Task<Team> GetTeamByIdAsync(int teamId)
+        {
+            return await _context.Teams
+                .Include(t => t.Players)
+                .FirstOrDefaultAsync(t => t.Id == teamId);
+        }
+
         public async Task SaveTeamAsync(Team team)
         {
             await _context.Teams.AddAsync(team);

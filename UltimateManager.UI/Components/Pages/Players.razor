@@ -21,25 +21,30 @@
 
 @if (newPlayerButtonStatus)
 {
-    <form @onsubmit="HandleSubmit">
-        <div class="form-control">
-            <label for="newPlayerName"> Name </label>
-            <input type="text" @bind-value="newPlayer.Name" />
-            <br />
-            <label for="newPlayerTeam"> Team </label>
-            <select @bind="newPlayer.TeamId">
-                <option value=""> Select Team </option>
-                @foreach(var team in allTeams)
+    <form class="form-horizontal" @onsubmit="HandleSubmit">
+        <div class="mb-3">
+            <label for="newPlayerFirstName" class="form-label">First Name</label>
+            <input type="text" class="form-control" id="newPlayerFirstName" @bind-value="newPlayer.FirstName" required />
+        </div>
+        <div class="mb-3">
+            <label for="newPlayerLastName" class="form-label">Last Name</label>
+            <input type="text" class="form-control" id="newPlayerLastName" @bind-value="newPlayer.LastName" required />
+        </div>
+        <div class="mb-3">
+            <label for="newPlayerTeam" class="form-label">Team</label>
+            <select class="form-select" id="newPlayerTeam" @bind="newPlayer.TeamId" required>
+                <option value="">Select Team</option>
+                @foreach (var team in allTeams)
                 {
                     <option value="@team.Id">@team.Name</option>
                 }
             </select>
-            <br />
-            <label for="newPlayerAge"> Age </label>
-            <input type="number" @bind-value="newPlayer.Age" min="14" max="99" />
-            <br />
-            <button class="btn btn-success" @onclick="AddToPlayerList"> Add </button>
         </div>
+        <div class="mb-3">
+            <label for="newPlayerAge" class="form-label">Age</label>
+            <input type="number" class="form-control" id="newPlayerAge" @bind-value="newPlayer.Age" min="14" max="99" required />
+        </div>
+        <button type="submit" class="btn btn-success">Add</button>
     </form>
 }
 
@@ -50,7 +55,8 @@
         @foreach (var player in newPlayerList)
         {
             <tr>
-                <td>@player.Name</td>
+                <td>@player.FirstName</td>
+                <td>@player.LastName</td>
                 <td>@player.Age</td>
                 <td>@player.Team?.Name</td>
             </tr>
@@ -68,24 +74,29 @@
 else
 {
     <table class="table">
+        <thead>
         <tr>
             <th> Name </th>
             <th> Age </th>
             <th> Overall </th>
             <th> Team </th>
+            <th></th>
         </tr>
+        </thead>
+        <tbody>
         @foreach(var player in allPlayers)
         {
             <tr>
-                <td>@player.Name</td>
+                <td>@player.FirstName @player.LastName</td>
                 <td>@player.Age</td>
                 <td>@player.Overall</td>
                 <td>@player.Team?.Name</td>
                 <td>
-                    <button class="btn btn-close" @onclick="() => DeletePlayer(player)"></button>
+                    <button class="btn btn-danger" @onclick="() => DeletePlayer(player)"> 🗙 </button>
                 </td>
             </tr>
         }
+        </tbody>
     </table>
 }
 
@@ -111,7 +122,7 @@ else
 
     private void AddToPlayerList()
     {
-        if (string.IsNullOrWhiteSpace(newPlayer.Name))
+        if (string.IsNullOrWhiteSpace(newPlayer.FirstName))
         {
             Console.WriteLine("Player name cannot be empty.");
             return;

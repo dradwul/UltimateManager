@@ -9,11 +9,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "3.Data", "3.Data", "{8C3382
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1.Domain", "1.Domain", "{07B3438C-1F7D-4FFE-8699-4C7E6A984019}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UltimateManager.Data", "UltimateManager.Data\UltimateManager.Data.csproj", "{34AFC7F5-22C8-4F63-8A5D-89883FF7700F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UltimateManager.Data", "UltimateManager.Data\UltimateManager.Data.csproj", "{34AFC7F5-22C8-4F63-8A5D-89883FF7700F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UltimateManager.Domain", "UltimateManager.Domain\UltimateManager.Domain.csproj", "{F4FA26EF-7E5D-41D6-90E9-C99522AAA140}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UltimateManager.Domain", "UltimateManager.Domain\UltimateManager.Domain.csproj", "{F4FA26EF-7E5D-41D6-90E9-C99522AAA140}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UltimateManager.UI", "UltimateManager.UI\UltimateManager.UI.csproj", "{95FED22D-2DAC-4514-9798-21E1EBB331CE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UltimateManager.UI", "UltimateManager.UI\UltimateManager.UI.csproj", "{95FED22D-2DAC-4514-9798-21E1EBB331CE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

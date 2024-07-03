@@ -45,22 +45,31 @@
 else
 {
 	<table class="table">
+		<thead>
 		<tr>
 			<th> Team </th>
 			<th> Color </th>
 			<th> Overall </th>
+			<th></th>
 		</tr>
+		</thead>
+		<tbody>
 		@foreach(var team in allTeams)
-		{
+		{			
 			<tr>
-				<td>@team.Name</td>
+				<td>
+					<a href="/teams/@team.Id">
+						@team.Name
+					</a>
+				</td>
 				<td>@team.PrimaryColor / @team.SecondaryColor</td>
 				<td>@team.Overall</td>
 				<td>
-					<button class="btn btn-close" @onclick="() => DeleteTeam(team)"></button>
+				<button class="btn btn-danger" @onclick="() => DeleteTeam(team)"> 🗙 </button>
 				</td>
 			</tr>
 		}
+		</tbody>
 	</table>
 }
 
