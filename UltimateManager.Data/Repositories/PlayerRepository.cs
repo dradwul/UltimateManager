@@ -29,5 +29,10 @@ namespace UltimateManager.Data.Repositories
             _context.Remove(player);
             await _context.SaveChangesAsync();
         }
+
+        public static int? CalculateAge(Player player)
+        {
+            return DateTime.Now.Year - player.BirthYear;
+        }
     }
 }

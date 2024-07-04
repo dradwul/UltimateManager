@@ -41,8 +41,8 @@
             </select>
         </div>
         <div class="mb-3">
-            <label for="newPlayerAge" class="form-label">Age</label>
-            <input type="number" class="form-control" id="newPlayerAge" @bind-value="newPlayer.Age" min="14" max="99" required />
+            <label for="newPlayerBirthYear" class="form-label">Year of Birth</label>
+            <input type="number" class="form-control" id="newPlayerBirthYear" @bind-value="newPlayer.BirthYear" min="1900" max="@DateTime.Now.Year" required />
         </div>
         <button type="submit" class="btn btn-success">Add</button>
     </form>
@@ -57,7 +57,7 @@
             <tr>
                 <td>@player.FirstName</td>
                 <td>@player.LastName</td>
-                <td>@player.Age</td>
+                <td>@player.BirthYear</td>
                 <td>@player.Team?.Name</td>
             </tr>
         }
@@ -88,7 +88,7 @@ else
         {
             <tr>
                 <td>@player.FirstName @player.LastName</td>
-                <td>@player.Age</td>
+                <td>@PlayerRepository.CalculateAge(player)</td>
                 <td>@player.Overall</td>
                 <td>@player.Team?.Name</td>
                 <td>

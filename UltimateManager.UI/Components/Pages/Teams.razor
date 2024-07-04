@@ -20,19 +20,20 @@
 
 @if (newTeamButtonStatus)
 {
-	<form>
-		<div class="form-control">
-			<label for="newTeamName"> Team </label>
-			<input type="text" @bind-value="newTeam.Name" />
-			<br />
-			<label for="newTeamPrimaryColor"> Primary Color </label>
-			<input type="text" @bind-value="newTeam.PrimaryColor" />
-			<br />
-			<label for="newTeamSecondaryColor"> Secondary Color </label>
-			<input type="text" @bind-value="newTeam.SecondaryColor" />
-			<br />
-			<button class="btn btn-success" @onclick="AddTeam"> Save </button>
+	<form class="form-horizontal" @onsubmit="AddTeam">
+		<div class="mb-3">
+			<label for="newTeamName" class="form-label">Team Name</label>
+			<input type="text" class="form-control" id="newTeamName" @bind-value="newTeam.Name" required />
 		</div>
+		<div class="mb-3">
+			<label for="newTeamPrimaryColor" class="form-label">Primary Color</label>
+			<input type="text" class="form-control" id="newTeamPrimaryColor" @bind-value="newTeam.PrimaryColor" required />
+		</div>
+		<div class="mb-3">
+			<label for="newTeamSecondaryColor" class="form-label">Secondary Color</label>
+			<input type="text" class="form-control" id="newTeamSecondaryColor" @bind-value="newTeam.SecondaryColor" required />
+		</div>
+		<button type="submit" class="btn btn-success">Save</button>
 	</form>
 }
 
