@@ -7,14 +7,13 @@
         public string LastName { get; set; }
         public int? BirthYear { get; set; }
         public int? Overall { get; set; }
-        public int? PlayerPositionId { get; set; }
-        public PlayerPosition? PlayerPosition { get; set; }
-        public ICollection<PlayerPositionRelation> PlayerPositionRelations { get; set; }
         public int? PlayerAttributesId { get; set; }
         public PlayerAttributes? PlayerAttributes { get; set; }
         public int? PlayerStatsId { get; set; }
         public PlayerStats? PlayerStats { get; set; }
         public int? TeamId { get; set; }
         public Team? Team { get; set; }
+
+        public ICollection<PlayerPosition>? PlayerPositions { get; set; }
     }
 }

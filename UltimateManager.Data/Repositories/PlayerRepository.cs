@@ -15,12 +15,20 @@ namespace UltimateManager.Data.Repositories
         {
             return await _context.Players
                 .Include(p => p.Team)
+                .Include(p => p.PlayerPositions)
                 .ToListAsync();
         }
 
         public async Task SavePlayerAsync(Player player)
         {
-            await _context.Players.AddAsync(player);
+            if (player.Id == 0)
+            {
+                _context.Players.Add(player);
+            }
+            else
+            {
+                _context.Players.Update(player);
+            }
             await _context.SaveChangesAsync();
         }
 

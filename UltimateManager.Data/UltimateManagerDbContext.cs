@@ -10,7 +10,6 @@ namespace UltimateManager.Data
 
         public DbSet<Player> Players { get; set; }
         public DbSet<PlayerPosition> PlayerPositions { get; set; }
-        public DbSet<PlayerPositionRelation> PlayerPositionsRelations { get; set; }
         public DbSet<PlayerAttributes> PlayerAttributes { get; set; }
         public DbSet<PlayerStats> PlayerStats { get; set; }
         public DbSet<Team> Teams { get; set; }
@@ -26,19 +25,6 @@ namespace UltimateManager.Data
             modelBuilder.Entity<TeamStats>().HasKey(ts => ts.Id);
             modelBuilder.Entity<Coach>().HasKey(c => c.Id);
 
-            modelBuilder.Entity<PlayerPositionRelation>()
-                .HasKey(ppr => new { ppr.PlayerId, ppr.PlayerPositionId });
-
-            modelBuilder.Entity<PlayerPositionRelation>()
-                .HasOne(ppr => ppr.Player)
-                .WithMany(p => p.PlayerPositionRelations)
-                .HasForeignKey(ppr => ppr.PlayerId);
-
-            modelBuilder.Entity<PlayerPositionRelation>()
-                .HasOne(ppr => ppr.PlayerPosition)
-                .WithMany(pp => pp.PlayerPositionRelations)
-                .HasForeignKey(ppr => ppr.PlayerPositionId);
-
             modelBuilder.Entity<Player>()
                 .HasOne(p => p.PlayerAttributes)
                 .WithOne()
@@ -50,11 +36,6 @@ namespace UltimateManager.Data
                 .WithOne()
                 .HasForeignKey<Player>(p => p.PlayerStatsId)
                 .HasPrincipalKey<PlayerStats>(ps => ps.Id);
-
-            modelBuilder.Entity<Player>()
-                .HasOne(p => p.PlayerPosition)
-                .WithMany()
-                .HasForeignKey(p => p.PlayerPositionId);
 
             modelBuilder.Entity<Team>()
                 .HasMany(t => t.Players)
@@ -73,6 +54,33 @@ namespace UltimateManager.Data
                 .WithOne(c => c.Team)
                 .HasForeignKey<Team>(t => t.CoachId)
                 .HasPrincipalKey<Coach>(c => c.Id);
+
+            modelBuilder.Entity<PlayerPosition>()
+                .HasMany(pp => pp.Players)
+                .WithMany(p => p.PlayerPositions)
+                .UsingEntity<Dictionary<string, object>>(
+                "PlayerPlayerPosition",
+                r => r.HasOne<Player>().WithMany().HasForeignKey("PlayerId"),
+                l => l.HasOne<PlayerPosition>().WithMany().HasForeignKey("PlayerPositionId"),
+                je =>
+                {
+                    je.HasKey("PlayerId", "PlayerPositionId");
+                });
+
+            modelBuilder.Entity<PlayerPosition>().HasData(
+                new PlayerPosition { Id = 1, PositionType = "Goalkeeper", PositionSpecified = "Goal Keeper"},
+                new PlayerPosition { Id = 2, PositionType = "Defender", PositionSpecified = "Center Back" },
+                new PlayerPosition { Id = 3, PositionType = "Defender", PositionSpecified = "Right Back" },
+                new PlayerPosition { Id = 4, PositionType = "Defender", PositionSpecified = "Left Back" },
+                new PlayerPosition { Id = 5, PositionType = "Midfielder", PositionSpecified = "Central Midfielder" },
+                new PlayerPosition { Id = 6, PositionType = "Midfielder", PositionSpecified = "Central Defending Midfielder" },
+                new PlayerPosition { Id = 7, PositionType = "Midfielder", PositionSpecified = "Central Attacking Midfielder" },
+                new PlayerPosition { Id = 8, PositionType = "Midfielder", PositionSpecified = "Right Midfielder" },
+                new PlayerPosition { Id = 9, PositionType = "Midfielder", PositionSpecified = "Left Midfielder" },
+                new PlayerPosition { Id = 10, PositionType = "Forward", PositionSpecified = "Striker" },
+                new PlayerPosition { Id = 11, PositionType = "Forward", PositionSpecified = "Right Winger" },
+                new PlayerPosition { Id = 12, PositionType = "Forward", PositionSpecified = "Left Winger" }
+            );
         }
     }
 }

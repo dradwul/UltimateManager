@@ -31,6 +31,18 @@
             <input type="text" class="form-control" id="newPlayerLastName" @bind-value="newPlayer.LastName" required />
         </div>
         <div class="mb-3">
+            <label for="newPlayerPositions" class="form-label">Positions</label>
+            <div>
+                @foreach (var position in allPositions)
+                {
+                    <div>
+                        <input type="checkbox" id="position_@position.Id" @onchange="(e) => OnPositionCheckboxChanged(e, position.Id)" checked="@selectedPositionIds.Contains(position.Id)" />
+                        <label for="position_@position.Id">@position.PositionSpecified</label>
+                    </div>
+                }
+            </div>
+        </div>
+        <div class="mb-3">
             <label for="newPlayerTeam" class="form-label">Team</label>
             <select class="form-select" id="newPlayerTeam" @bind="newPlayer.TeamId" required>
                 <option value="">Select Team</option>
@@ -59,6 +71,14 @@
                 <td>@player.LastName</td>
                 <td>@player.BirthYear</td>
                 <td>@player.Team?.Name</td>
+                <td>
+                    @foreach (var position in player.PlayerPositions)
+                    {
+                        <span>@position.PositionSpecified</span>
+
+                        <br />
+                    }
+                </td>
             </tr>
         }
     </table>
@@ -67,7 +87,7 @@
 
 <hr />
 
-@if(allPlayers == null)
+@if (allPlayers == null)
 {
     <p><em>Loading...</em></p>
 }
@@ -75,37 +95,47 @@ else
 {
     <table class="table">
         <thead>
-        <tr>
-            <th> Name </th>
-            <th> Age </th>
-            <th> Overall </th>
-            <th> Team </th>
-            <th></th>
-        </tr>
+            <tr>
+                <th> Name </th>
+                <th> Age </th>
+                <th> Overall </th>
+                <th> Team </th>
+                <th> Positions </th>
+                <th></th>
+            </tr>
         </thead>
         <tbody>
-        @foreach(var player in allPlayers)
-        {
-            <tr>
-                <td>@player.FirstName @player.LastName</td>
-                <td>@PlayerRepository.CalculateAge(player)</td>
-                <td>@player.Overall</td>
-                <td>@player.Team?.Name</td>
-                <td>
-                    <button class="btn btn-danger" @onclick="() => DeletePlayer(player)"> 🗙 </button>
-                </td>
-            </tr>
-        }
+            @foreach (var player in allPlayers)
+            {
+                <tr>
+                    <td>@player.FirstName @player.LastName</td>
+                    <td>@PlayerRepository.CalculateAge(player)</td>
+                    <td>@player.Overall</td>
+                    <td>@player.Team?.Name</td>
+                    <td>
+                        @foreach (var position in player.PlayerPositions)
+                        {
+                            <span>@position.PositionSpecified</span>
+
+                            <br />
+                        }
+                    </td>
+                    <td>
+                        <button class="btn btn-danger" @onclick="() => DeletePlayer(player)"> 🗙 </button>
+                    </td>
+                </tr>
+            }
         </tbody>
     </table>
 }
 
-
 @code {
     List<Team> allTeams = new();
     List<Player> allPlayers = new();
+    List<PlayerPosition> allPositions = new();
     List<Player> newPlayerList = new();
     Player newPlayer = new();
+    List<int> selectedPositionIds = new();
 
     private bool newPlayerButtonStatus = false;
 
@@ -113,6 +143,7 @@ else
     {
         allPlayers = await PlayerRepository.GetAllPlayersAsync();
         allTeams = (await TeamRepository.GetAllTeamsAsync()).OrderBy(t => t.Name).ToList();
+        allPositions = await PlayerRepository.GetAllPositionsAsync();
     }
 
     private void CreatePlayer()
@@ -130,8 +161,25 @@ else
 
         var selectedTeam = allTeams.FirstOrDefault(t => t.Id == newPlayer.TeamId);
         newPlayer.Team = selectedTeam;
+
+        newPlayer.PlayerPositions = new List<PlayerPosition>();
+        foreach (var positionId in selectedPositionIds)
+        {
+            var position = allPositions.FirstOrDefault(p => p.Id == positionId);
+            if (position != null)
+            {
+                newPlayer.PlayerPositions.Add(position);
+            }
+        }
+
         newPlayerList.Add(newPlayer);
+        ResetNewPlayerForm();
+    }
+
+    private void ResetNewPlayerForm()
+    {
         newPlayer = new();
+        selectedPositionIds = new();
     }
 
     private async Task HandleSubmit()
@@ -142,7 +190,7 @@ else
 
     private async Task SubmitNewPlayers()
     {
-        foreach(var player in newPlayerList)
+        foreach (var player in newPlayerList)
         {
             await PlayerRepository.SavePlayerAsync(player);
         }
@@ -155,5 +203,24 @@ else
         await PlayerRepository.DeletePlayerAsync(player);
         allPlayers = await PlayerRepository.GetAllPlayersAsync();
         StateHasChanged();
+    }
+
+    private void OnPositionCheckboxChanged(ChangeEventArgs e, int positionId)
+    {
+        var isChecked = (bool)e.Value;
+        if (isChecked)
+        {
+            if (!selectedPositionIds.Contains(positionId))
+            {
+                selectedPositionIds.Add(positionId);
+            }
+        }
+        else
+        {
+            if (selectedPositionIds.Contains(positionId))
+            {
+                selectedPositionIds.Remove(positionId);
+            }
+        }
     }
 }
