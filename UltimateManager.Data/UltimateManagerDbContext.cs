@@ -9,6 +9,8 @@ namespace UltimateManager.Data
             : base(dbContextOptions) { }
 
         public DbSet<Player> Players { get; set; }
+        public DbSet<PlayerPosition> PlayerPositions { get; set; }
+        public DbSet<PlayerPositionRelation> PlayerPositionsRelations { get; set; }
         public DbSet<PlayerAttributes> PlayerAttributes { get; set; }
         public DbSet<PlayerStats> PlayerStats { get; set; }
         public DbSet<Team> Teams { get; set; }
@@ -24,17 +26,35 @@ namespace UltimateManager.Data
             modelBuilder.Entity<TeamStats>().HasKey(ts => ts.Id);
             modelBuilder.Entity<Coach>().HasKey(c => c.Id);
 
+            modelBuilder.Entity<PlayerPositionRelation>()
+                .HasKey(ppr => new { ppr.PlayerId, ppr.PlayerPositionId });
+
+            modelBuilder.Entity<PlayerPositionRelation>()
+                .HasOne(ppr => ppr.Player)
+                .WithMany(p => p.PlayerPositionRelations)
+                .HasForeignKey(ppr => ppr.PlayerId);
+
+            modelBuilder.Entity<PlayerPositionRelation>()
+                .HasOne(ppr => ppr.PlayerPosition)
+                .WithMany(pp => pp.PlayerPositionRelations)
+                .HasForeignKey(ppr => ppr.PlayerPositionId);
+
             modelBuilder.Entity<Player>()
                 .HasOne(p => p.PlayerAttributes)
-            .WithOne()
+                .WithOne()
                 .HasForeignKey<Player>(p => p.PlayerAttributesId)
                 .HasPrincipalKey<PlayerAttributes>(pa => pa.Id);
 
             modelBuilder.Entity<Player>()
                 .HasOne(p => p.PlayerStats)
-            .WithOne()
+                .WithOne()
                 .HasForeignKey<Player>(p => p.PlayerStatsId)
                 .HasPrincipalKey<PlayerStats>(ps => ps.Id);
+
+            modelBuilder.Entity<Player>()
+                .HasOne(p => p.PlayerPosition)
+                .WithMany()
+                .HasForeignKey(p => p.PlayerPositionId);
 
             modelBuilder.Entity<Team>()
                 .HasMany(t => t.Players)

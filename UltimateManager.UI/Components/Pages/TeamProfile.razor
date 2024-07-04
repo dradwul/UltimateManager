@@ -1,6 +1,7 @@
 ﻿@page "/teams/{teamId:int}"
 @using UltimateManager.Data.Repositories
 @using UltimateManager.Domain.Models
+@inject PlayerRepository PlayerRepository
 @inject TeamRepository TeamRepository
 
 <PageTitle>Team Details</PageTitle>
@@ -27,7 +28,7 @@ else
 			<table class="table">
 				<tr>
 					<th>Name</th>
-					<th>Year of Birth</th>
+					<th>Age</th>
 					<th>Overall</th>
 				</tr>
 				@foreach(var player in team.Players)

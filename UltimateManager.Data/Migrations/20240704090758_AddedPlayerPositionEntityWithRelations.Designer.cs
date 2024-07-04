@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using UltimateManager.Data;
@@ -11,9 +12,11 @@ using UltimateManager.Data;
 namespace UltimateManager.Data.Migrations
 {
     [DbContext(typeof(UltimateManagerDbContext))]
-    partial class UltimateManagerDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240704090758_AddedPlayerPositionEntityWithRelations")]
+    partial class AddedPlayerPositionEntityWithRelations
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -83,7 +86,8 @@ namespace UltimateManager.Data.Migrations
                     b.HasIndex("PlayerAttributesId")
                         .IsUnique();
 
-                    b.HasIndex("PlayerPositionId");
+                    b.HasIndex("PlayerPositionId")
+                        .IsUnique();
 
                     b.HasIndex("PlayerStatsId")
                         .IsUnique();
@@ -144,32 +148,18 @@ namespace UltimateManager.Data.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("PositionAlternative")
+                        .HasColumnType("text");
+
                     b.Property<string>("PositionSpecified")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("PositionType")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
 
-                    b.ToTable("PlayerPositions");
-                });
-
-            modelBuilder.Entity("UltimateManager.Domain.Models.PlayerPositionRelation", b =>
-                {
-                    b.Property<int>("PlayerId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("PlayerPositionId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("PlayerId", "PlayerPositionId");
-
-                    b.HasIndex("PlayerPositionId");
-
-                    b.ToTable("PlayerPositionsRelations");
+                    b.ToTable("PlayerPosition");
                 });
 
             modelBuilder.Entity("UltimateManager.Domain.Models.PlayerStats", b =>
@@ -282,8 +272,8 @@ namespace UltimateManager.Data.Migrations
                         .HasForeignKey("UltimateManager.Domain.Models.Player", "PlayerAttributesId");
 
                     b.HasOne("UltimateManager.Domain.Models.PlayerPosition", "PlayerPosition")
-                        .WithMany()
-                        .HasForeignKey("PlayerPositionId");
+                        .WithOne()
+                        .HasForeignKey("UltimateManager.Domain.Models.Player", "PlayerPositionId");
 
                     b.HasOne("UltimateManager.Domain.Models.PlayerStats", "PlayerStats")
                         .WithOne()
@@ -300,25 +290,6 @@ namespace UltimateManager.Data.Migrations
                     b.Navigation("PlayerStats");
 
                     b.Navigation("Team");
-                });
-
-            modelBuilder.Entity("UltimateManager.Domain.Models.PlayerPositionRelation", b =>
-                {
-                    b.HasOne("UltimateManager.Domain.Models.Player", "Player")
-                        .WithMany("PlayerPositionRelations")
-                        .HasForeignKey("PlayerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("UltimateManager.Domain.Models.PlayerPosition", "PlayerPosition")
-                        .WithMany("PlayerPositionRelations")
-                        .HasForeignKey("PlayerPositionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Player");
-
-                    b.Navigation("PlayerPosition");
                 });
 
             modelBuilder.Entity("UltimateManager.Domain.Models.Team", b =>
@@ -339,16 +310,6 @@ namespace UltimateManager.Data.Migrations
             modelBuilder.Entity("UltimateManager.Domain.Models.Coach", b =>
                 {
                     b.Navigation("Team");
-                });
-
-            modelBuilder.Entity("UltimateManager.Domain.Models.Player", b =>
-                {
-                    b.Navigation("PlayerPositionRelations");
-                });
-
-            modelBuilder.Entity("UltimateManager.Domain.Models.PlayerPosition", b =>
-                {
-                    b.Navigation("PlayerPositionRelations");
                 });
 
             modelBuilder.Entity("UltimateManager.Domain.Models.Team", b =>

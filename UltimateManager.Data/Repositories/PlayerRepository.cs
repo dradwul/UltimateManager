@@ -34,5 +34,23 @@ namespace UltimateManager.Data.Repositories
         {
             return DateTime.Now.Year - player.BirthYear;
         }
-    }
+
+
+		public async Task<List<PlayerPosition>> GetAllPositionsAsync()
+		{
+			return await _context.PlayerPositions.ToListAsync();
+		}
+
+        public async Task SavePositionAsync(PlayerPosition position)
+        {
+            await _context.PlayerPositions.AddAsync(position);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task DeletePositionAsync(PlayerPosition position)
+        {
+            _context.Remove(position);
+            await _context.SaveChangesAsync();
+        }
+	}
 }

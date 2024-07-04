@@ -1,0 +1,125 @@
+﻿@page "/admintool"
+@using UltimateManager.Data.Repositories
+@using UltimateManager.Domain.Models
+@inject PlayerRepository PlayerRepository
+@inject TeamRepository TeamRepository
+
+<h3>Admin Tool</h3>
+
+<div class="admin-positions" style="border:1px solid #ddd;padding:10px;">
+<h4>Positions</h4>
+
+<button class="btn btn-primary" @onclick="CreatePosition">
+	@if (newPositionButtonStatus)
+	{
+		<span> Cancel </span>
+	}
+	else
+	{
+		<span> New Position </span>
+	}
+</button>
+
+<button class="btn btn-secondary" @onclick="ShowPositions">
+	@if (showPositions)
+	{
+		<span> Hide Positions </span>
+	}
+	else
+	{
+		<span> Show Positions </span>
+	}
+</button>
+
+@if (newPositionButtonStatus)
+{
+	<form class="form-horizontal" @onsubmit="HandleSubmit">
+		<div class="mb-3">
+			<label for="newPositionType" class="form-label">Position Type</label>
+			<input type="text" class="form-control" id="newPositionType" @bind="newPosition.PositionType" required />
+		</div>
+		<div class="mb-3">
+			<label for="newPositionSpecified" class="form-label">Position Specified</label>
+			<input type="text" class="form-control" id="newPositionSpecified" @bind="newPosition.PositionSpecified" required />
+		</div>
+		<button type="submit" class="btn btn-success">Save</button>
+	</form>
+}
+
+@if (allPositions.Any() && showPositions)
+{
+	<table class="table">
+		<thead>
+			<tr>
+				<th>Position Type</th>
+				<th>Position Specified</th>
+				<th>Actions</th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var position in allPositions)
+			{
+				<tr>
+					<td>@position.PositionType</td>
+					<td>@position.PositionSpecified</td>
+					<td>
+						<button class="btn btn-danger" @onclick="() => DeletePosition(position)">Delete</button>
+					</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+}
+</div>
+
+@code {
+	private List<Team> allTeams = new();
+	private List<Player> allPlayers = new();
+	private List<PlayerPosition> allPositions = new();
+	PlayerPosition newPosition = new();
+
+	private bool newPositionButtonStatus = false;
+	private bool showPositions = false;
+
+	protected override async Task OnInitializedAsync()
+	{
+		await LoadDataAsync();
+	}
+
+	private void CreatePosition()
+	{
+		newPositionButtonStatus = !newPositionButtonStatus;
+	}
+
+	private void ShowPositions()
+	{
+		showPositions = !showPositions;
+	}
+
+	private async Task HandleSubmit()
+	{
+		await AddPosition();
+	}
+
+	private async Task AddPosition()
+	{
+		await PlayerRepository.SavePositionAsync(newPosition);
+		newPosition = new();
+		newPositionButtonStatus = false;
+		await LoadDataAsync();
+	}
+
+	private async Task DeletePosition(PlayerPosition position)
+	{
+		await PlayerRepository.DeletePositionAsync(position);
+		await LoadDataAsync();
+	}
+
+	private async Task LoadDataAsync()
+	{
+		allTeams = await TeamRepository.GetAllTeamsAsync();
+		allPlayers = await PlayerRepository.GetAllPlayersAsync();
+		allPositions = await PlayerRepository.GetAllPositionsAsync();
+		StateHasChanged();
+	}
+}
