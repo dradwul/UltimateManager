@@ -31,9 +31,13 @@
             <input type="text" class="form-control" id="newPlayerLastName" @bind-value="newPlayer.LastName" required />
         </div>
         <div class="mb-3">
+            <label for="newPlayerBirthYear" class="form-label">Year of Birth</label>
+            <input type="number" class="form-control" id="newPlayerBirthYear" @bind-value="newPlayer.BirthYear" min="1900" max="@DateTime.Now.Year" required />
+        </div>
+        <div class="mb-3">
             <label for="newPlayerPositions" class="form-label">Positions</label>
             <div>
-                @foreach (var position in allPositions)
+                @foreach(var position in allPositions)
                 {
                     <div>
                         <input type="checkbox" id="position_@position.Id" @onchange="(e) => OnPositionCheckboxChanged(e, position.Id)" checked="@selectedPositionIds.Contains(position.Id)" />
@@ -41,6 +45,20 @@
                     </div>
                 }
             </div>
+        </div>
+        <div class="mb-3" style="border-radius:5px;border:1px solid #ddd;padding: 8px;display:flex;flex-direction:row;">
+
+                <div style="background-color: #ddd;margin-left: 2px;"> 
+                    <input style="width: 60px;" min="0" max="99" type="number" placeholder="DEF" @bind-value="playerAttributes.Defending"/>
+                    <input style="width: 60px;" min="0" max="99" type="number" placeholder="ATT" @bind-value="playerAttributes.Attacking" />
+                    <input style="width: 60px;" min="0" max="99" type="number" placeholder="SPD" @bind-value="playerAttributes.Speed" />
+                    <input style="width: 60px;" min="0" max="99" type="number" placeholder="PAS" @bind-value="playerAttributes.Passing" />
+                    <input style="width: 60px;" min="0" max="99" type="number" placeholder="SHO" @bind-value="playerAttributes.Shooting" />
+                    <input style="width: 60px;" min="0" max="99" type="number" placeholder="INT" @bind-value="playerAttributes.Intelligence" />
+                    <input style="width: 60px;" min="0" max="99" type="number" placeholder="PHY" @bind-value="playerAttributes.Physical" />
+                    <input style="width: 60px;" type="number" placeholder="GLK" @bind-value="playerAttributes.Goalkeeping" />
+            </div>
+
         </div>
         <div class="mb-3">
             <label for="newPlayerTeam" class="form-label">Team</label>
@@ -51,10 +69,6 @@
                     <option value="@team.Id">@team.Name</option>
                 }
             </select>
-        </div>
-        <div class="mb-3">
-            <label for="newPlayerBirthYear" class="form-label">Year of Birth</label>
-            <input type="number" class="form-control" id="newPlayerBirthYear" @bind-value="newPlayer.BirthYear" min="1900" max="@DateTime.Now.Year" required />
         </div>
         <button type="submit" class="btn btn-success">Add</button>
     </form>
@@ -110,7 +124,7 @@ else
                 <tr>
                     <td>@player.FirstName @player.LastName</td>
                     <td>@PlayerRepository.CalculateAge(player)</td>
-                    <td>@player.Overall</td>
+                    <td>@PlayerRepository.CalculateOverall(player)</td>
                     <td>@player.Team?.Name</td>
                     <td>
                         @foreach (var position in player.PlayerPositions)
@@ -136,6 +150,7 @@ else
     List<Player> newPlayerList = new();
     Player newPlayer = new();
     List<int> selectedPositionIds = new();
+    PlayerAttributes playerAttributes = new();
 
     private bool newPlayerButtonStatus = false;
 
@@ -162,6 +177,8 @@ else
         var selectedTeam = allTeams.FirstOrDefault(t => t.Id == newPlayer.TeamId);
         newPlayer.Team = selectedTeam;
 
+        newPlayer.PlayerAttributes = playerAttributes;
+
         newPlayer.PlayerPositions = new List<PlayerPosition>();
         foreach (var positionId in selectedPositionIds)
         {
@@ -180,6 +197,7 @@ else
     {
         newPlayer = new();
         selectedPositionIds = new();
+        playerAttributes = new();
     }
 
     private async Task HandleSubmit()

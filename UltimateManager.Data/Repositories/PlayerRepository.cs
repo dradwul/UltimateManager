@@ -14,6 +14,7 @@ namespace UltimateManager.Data.Repositories
         public async Task<List<Player>> GetAllPlayersAsync()
         {
             return await _context.Players
+                .Include(p => p.PlayerAttributes)
                 .Include(p => p.Team)
                 .Include(p => p.PlayerPositions)
                 .ToListAsync();
@@ -43,6 +44,30 @@ namespace UltimateManager.Data.Repositories
             return DateTime.Now.Year - player.BirthYear;
         }
 
+        public static int? CalculateOverall(Player player)
+        {
+            if (player == null)
+            {
+                return null;
+            }
+            bool isGoalkeeper = player.PlayerPositions.Any(pp => pp.PositionType == "Goalkeeper");
+            if (isGoalkeeper && player.PlayerAttributes != null && player.PlayerAttributes.Goalkeeping.HasValue)
+            {
+                return player.PlayerAttributes.Goalkeeping;
+            }
+            else
+            {
+                return
+                    ((player.PlayerAttributes?.Defending ?? 0) +
+                    (player.PlayerAttributes?.Attacking ?? 0) +
+                    (player.PlayerAttributes?.Speed ?? 0) +
+                    (player.PlayerAttributes?.Passing ?? 0) +
+                    (player.PlayerAttributes?.Shooting ?? 0) +
+                    (player.PlayerAttributes?.Intelligence ?? 0) +
+                    (player.PlayerAttributes?.Physical ?? 0))
+                    / 7;
+            }
+        }
 
 		public async Task<List<PlayerPosition>> GetAllPositionsAsync()
 		{
