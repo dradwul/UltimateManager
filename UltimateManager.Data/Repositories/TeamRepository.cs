@@ -41,22 +41,22 @@ namespace UltimateManager.Data.Repositories
 			await _context.SaveChangesAsync();
 		}
 
-        public async Task CalculateAllTeamsOverallAsync()
+        public async Task UpdateAllTeamsOverallAsync()
         {
-            var teams = await _context.Teams
-                .Include(t => t.Players)
-                .ToListAsync();
+            var teams = await GetAllTeamsAsync();
 
-            foreach(var team in teams)
+            foreach (var team in teams)
             {
-                foreach(var player in team.Players)
+                List<Player> playersInTeam = team.Players.ToList();
+                int overall = 0;
+                foreach(var player in playersInTeam)
                 {
-                    if(player.Overall != null)
-                    {
-                        team.Overall += player.Overall;
-					}
+                    overall += (int)player.Overall;
                 }
-                team.Overall; /// HÄR SKA DET DIVIDERAS MED ANTAL SPELARE TYP
+                if(overall > 0)
+                {
+                    team.Overall = overall / playersInTeam.Count;
+                }
             }
 
             _context.Teams.UpdateRange(teams);
