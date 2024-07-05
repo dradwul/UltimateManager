@@ -18,6 +18,10 @@
 	}
 </button>
 
+<button class="btn btn-outline-info" @onclick="UpdateAllTeamsOverall">
+	Update All Teams Overall
+</button>
+
 @if (newTeamButtonStatus)
 {
 	<form class="form-horizontal" @onsubmit="AddTeam">
@@ -85,7 +89,7 @@ else
 
 	protected override async Task OnInitializedAsync()
 	{
-		allTeams = await TeamRepository.GetAllTeamsAsync();
+		allTeams = (await TeamRepository.GetAllTeamsAsync()).OrderBy(t => t.Name).ToList();
 	}
 
 	private void CreateTeam()
@@ -104,5 +108,10 @@ else
 	{
 		await TeamRepository.DeleteTeamAsync(team);
 		StateHasChanged();
+	}
+
+	private async Task UpdateAllTeamsOverall()
+	{
+		await TeamRepository.UpdateAllTeamsOverallAsync();
 	}
 }

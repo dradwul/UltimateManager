@@ -50,17 +50,42 @@
                 }
             </div>
         </div>
-        <div class="mb-3" style="border-radius:5px;border:1px solid #ddd;padding: 8px;display:flex;flex-direction:row;">
+        <div class="mb-3" style="border-radius:5px;border:1px solid #ddd;padding: 8px;">
 
-            <div style="background-color: #ddd;margin-left: 2px;"> 
-                <input style="width: 60px;" min="0" max="99" type="number" placeholder="DEF" @bind-value="playerAttributes.Defending"/>
-                <input style="width: 60px;" min="0" max="99" type="number" placeholder="ATT" @bind-value="playerAttributes.Attacking" />
-                <input style="width: 60px;" min="0" max="99" type="number" placeholder="SPD" @bind-value="playerAttributes.Speed" />
-                <input style="width: 60px;" min="0" max="99" type="number" placeholder="PAS" @bind-value="playerAttributes.Passing" />
-                <input style="width: 60px;" min="0" max="99" type="number" placeholder="SHO" @bind-value="playerAttributes.Shooting" />
-                <input style="width: 60px;" min="0" max="99" type="number" placeholder="INT" @bind-value="playerAttributes.Intelligence" />
-                <input style="width: 60px;" min="0" max="99" type="number" placeholder="PHY" @bind-value="playerAttributes.Physical" />
-                <input style="width: 60px;" type="number" placeholder="GLK" @bind-value="playerAttributes.Goalkeeping" />
+            <div style="background-color: #ddd;display:flex;flex-direction:row;">
+                <div>
+                    <label>DEF</label>
+                    <input style="width: 60px;" min="0" max="99" type="number" @bind-value="playerAttributes.Defending" />
+                </div>
+                <div>
+                    <label>ATT</label>
+                    <input style="width: 60px;" min="0" max="99" type="number" placeholder="ATT" @bind-value="playerAttributes.Attacking" />
+                </div>
+                <div>
+                    <label>SPD</label>
+                    <input style="width: 60px;" min="0" max="99" type="number" placeholder="SPD" @bind-value="playerAttributes.Speed" />
+                </div>
+                <div>
+                    <label>PAS</label>
+                    <input style="width: 60px;" min="0" max="99" type="number" placeholder="PAS" @bind-value="playerAttributes.Passing" />
+                </div>
+                <div>
+                    <label>SHO</label>
+                    <input style="width: 60px;" min="0" max="99" type="number" placeholder="SHO" @bind-value="playerAttributes.Shooting" />
+                </div>
+                <div>
+                    <label>INT</label>
+                    <input style="width: 60px;" min="0" max="99" type="number" placeholder="INT" @bind-value="playerAttributes.Intelligence" />
+                </div>
+                <div>
+                    <label>PHY</label>
+                    <input style="width: 60px;" min="0" max="99" type="number" placeholder="PHY" @bind-value="playerAttributes.Physical" />
+                </div>
+                <div>
+                    <label>GLK</label>
+                    <input style="width: 60px;" type="number" placeholder="GLK" @bind-value="playerAttributes.Goalkeeping" />
+                </div>
+
             </div>
 
         </div>

@@ -59,15 +59,26 @@ namespace UltimateManager.Data.Repositories
             }
             else
             {
-                return
-                    ((player.PlayerAttributes?.Defending ?? 0) +
-                    (player.PlayerAttributes?.Attacking ?? 0) +
-                    (player.PlayerAttributes?.Speed ?? 0) +
-                    (player.PlayerAttributes?.Passing ?? 0) +
-                    (player.PlayerAttributes?.Shooting ?? 0) +
-                    (player.PlayerAttributes?.Intelligence ?? 0) +
-                    (player.PlayerAttributes?.Physical ?? 0))
-                    / 7;
+                List<int?> attributes = new List<int?>
+                {
+                    player.PlayerAttributes?.Defending,
+                    player.PlayerAttributes?.Attacking,
+                    player.PlayerAttributes?.Speed,
+                    player.PlayerAttributes?.Passing,
+                    player.PlayerAttributes?.Shooting,
+                    player.PlayerAttributes?.Intelligence,
+                    player.PlayerAttributes?.Physical
+                };
+                attributes.RemoveAll(att => !att.HasValue);
+                attributes.Sort((a,b) => b.Value.CompareTo(a.Value));
+                var topFiveAttributes = attributes.Take(5);
+                int total = (int)topFiveAttributes.Sum();
+                int overall = total / 5;
+                if(attributes.Count < 5)
+                {
+                    overall = 0;
+                }
+                return overall;
             }
         }
 

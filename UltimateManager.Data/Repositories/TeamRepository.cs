@@ -40,5 +40,27 @@ namespace UltimateManager.Data.Repositories
 			_context.Remove(team);
 			await _context.SaveChangesAsync();
 		}
-    }
+
+        public async Task CalculateAllTeamsOverallAsync()
+        {
+            var teams = await _context.Teams
+                .Include(t => t.Players)
+                .ToListAsync();
+
+            foreach(var team in teams)
+            {
+                foreach(var player in team.Players)
+                {
+                    if(player.Overall != null)
+                    {
+                        team.Overall += player.Overall;
+					}
+                }
+                team.Overall; /// HÄR SKA DET DIVIDERAS MED ANTAL SPELARE TYP
+            }
+
+            _context.Teams.UpdateRange(teams);
+            await _context.SaveChangesAsync();
+        }
+	}
 }
