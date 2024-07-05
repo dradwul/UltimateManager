@@ -22,6 +22,8 @@ namespace UltimateManager.Data.Repositories
 
         public async Task SavePlayerAsync(Player player)
         {
+            player.Overall = CalculateOverall(player);
+
             if (player.Id == 0)
             {
                 _context.Players.Add(player);
@@ -74,6 +76,35 @@ namespace UltimateManager.Data.Repositories
 			return await _context.PlayerPositions.ToListAsync();
 		}
 
+        public static string PositionShortener(Player player)
+        {
+            var positionMappings = new Dictionary<string, string>
+            {
+                {"Goal Keeper", "GK" },
+                {"Center Back", "CB" },
+                {"Right Back", "RB" },
+                {"Left Back", "LB" },
+                {"Central Midfielder", "CM" },
+                {"Central Defending Midfielder", "CDM" },
+                {"Central Attacking Midfielder", "CAM" },
+                {"Right Midfielder", "RM" },
+                {"Left Midfielder", "LM" },
+                {"Striker", "ST" },
+                {"Right Winger", "RW" },
+                {"Left Winger", "LW" }
+            };
+
+            if(player.PlayerPositions == null || !player.PlayerPositions.Any())
+            {
+                return string.Empty;
+            }
+
+            var shortNames = player.PlayerPositions
+                .Select(position => positionMappings.TryGetValue(position.PositionSpecified, out var shortName) ? shortName : position.PositionSpecified)
+                .ToList();
+            return string.Join(", ", shortNames);
+		}
+
         public async Task SavePositionAsync(PlayerPosition position)
         {
             await _context.PlayerPositions.AddAsync(position);
@@ -85,5 +116,22 @@ namespace UltimateManager.Data.Repositories
             _context.Remove(position);
             await _context.SaveChangesAsync();
         }
-	}
+
+        public async Task UpdateAllPlayersOverallAsync()
+        {
+            var players = await _context.Players
+                .Include(p => p.PlayerAttributes)
+                .Include(p => p.PlayerPositions)
+                .ToListAsync();
+
+            foreach (var player in players)
+            {
+                player.Overall = CalculateOverall(player);
+            }
+
+            _context.Players.UpdateRange(players);
+            await _context.SaveChangesAsync();
+        }
+
+    }
 }

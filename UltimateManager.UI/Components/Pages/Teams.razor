@@ -51,6 +51,7 @@ else
 			<th> Team </th>
 			<th> Color </th>
 			<th> Overall </th>
+			<th> Players </th>
 			<th></th>
 		</tr>
 		</thead>
@@ -65,6 +66,7 @@ else
 				</td>
 				<td>@team.PrimaryColor / @team.SecondaryColor</td>
 				<td>@team.Overall</td>
+				<td>@team.Players?.Count</td>
 				<td>
 				<button class="btn btn-danger" @onclick="() => DeleteTeam(team)"> 🗙 </button>
 				</td>

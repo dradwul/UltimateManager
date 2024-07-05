@@ -40,5 +40,5 @@ namespace UltimateManager.Data.Repositories
 			_context.Remove(team);
 			await _context.SaveChangesAsync();
 		}
-	}
+    }
 }

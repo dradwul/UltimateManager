@@ -19,6 +19,10 @@
     }
 </button>
 
+<button class="btn btn-outline-info" @onclick="UpdateAllPlayersOverall">
+    Update All Players Overall
+</button>
+
 @if (newPlayerButtonStatus)
 {
     <form class="form-horizontal" @onsubmit="HandleSubmit">
@@ -48,15 +52,15 @@
         </div>
         <div class="mb-3" style="border-radius:5px;border:1px solid #ddd;padding: 8px;display:flex;flex-direction:row;">
 
-                <div style="background-color: #ddd;margin-left: 2px;"> 
-                    <input style="width: 60px;" min="0" max="99" type="number" placeholder="DEF" @bind-value="playerAttributes.Defending"/>
-                    <input style="width: 60px;" min="0" max="99" type="number" placeholder="ATT" @bind-value="playerAttributes.Attacking" />
-                    <input style="width: 60px;" min="0" max="99" type="number" placeholder="SPD" @bind-value="playerAttributes.Speed" />
-                    <input style="width: 60px;" min="0" max="99" type="number" placeholder="PAS" @bind-value="playerAttributes.Passing" />
-                    <input style="width: 60px;" min="0" max="99" type="number" placeholder="SHO" @bind-value="playerAttributes.Shooting" />
-                    <input style="width: 60px;" min="0" max="99" type="number" placeholder="INT" @bind-value="playerAttributes.Intelligence" />
-                    <input style="width: 60px;" min="0" max="99" type="number" placeholder="PHY" @bind-value="playerAttributes.Physical" />
-                    <input style="width: 60px;" type="number" placeholder="GLK" @bind-value="playerAttributes.Goalkeeping" />
+            <div style="background-color: #ddd;margin-left: 2px;"> 
+                <input style="width: 60px;" min="0" max="99" type="number" placeholder="DEF" @bind-value="playerAttributes.Defending"/>
+                <input style="width: 60px;" min="0" max="99" type="number" placeholder="ATT" @bind-value="playerAttributes.Attacking" />
+                <input style="width: 60px;" min="0" max="99" type="number" placeholder="SPD" @bind-value="playerAttributes.Speed" />
+                <input style="width: 60px;" min="0" max="99" type="number" placeholder="PAS" @bind-value="playerAttributes.Passing" />
+                <input style="width: 60px;" min="0" max="99" type="number" placeholder="SHO" @bind-value="playerAttributes.Shooting" />
+                <input style="width: 60px;" min="0" max="99" type="number" placeholder="INT" @bind-value="playerAttributes.Intelligence" />
+                <input style="width: 60px;" min="0" max="99" type="number" placeholder="PHY" @bind-value="playerAttributes.Physical" />
+                <input style="width: 60px;" type="number" placeholder="GLK" @bind-value="playerAttributes.Goalkeeping" />
             </div>
 
         </div>
@@ -124,16 +128,9 @@ else
                 <tr>
                     <td>@player.FirstName @player.LastName</td>
                     <td>@PlayerRepository.CalculateAge(player)</td>
-                    <td>@PlayerRepository.CalculateOverall(player)</td>
+                    <td>@player.Overall</td>
                     <td>@player.Team?.Name</td>
-                    <td>
-                        @foreach (var position in player.PlayerPositions)
-                        {
-                            <span>@position.PositionSpecified</span>
-
-                            <br />
-                        }
-                    </td>
+                    <td>@PlayerRepository.PositionShortener(player)</td>
                     <td>
                         <button class="btn btn-danger" @onclick="() => DeletePlayer(player)"> 🗙 </button>
                     </td>
@@ -240,5 +237,10 @@ else
                 selectedPositionIds.Remove(positionId);
             }
         }
+    }
+
+    private async Task UpdateAllPlayersOverall()
+    {
+        await PlayerRepository.UpdateAllPlayersOverallAsync();
     }
 }
