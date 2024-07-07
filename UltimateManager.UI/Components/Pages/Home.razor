@@ -1,7 +1,77 @@
 ﻿@page "/"
 
-<PageTitle>Home</PageTitle>
+<PageTitle>Ultimate Manager</PageTitle>
 
-<h1>Hello, world!</h1>
+<style>
+	.grid-container {
+		padding: 15px;
+		display: grid;
+		grid-template-columns: auto auto auto;
+		grid-column-gap: 20px;
+		row-gap: 45px;
+	}
+	.grid-item {
+		display: flex;
+		background: linear-gradient(125deg, #fff,#ccc);
+		justify-content:center;
+		align-items:center;
+		text-align: center;
+		height: 70px;
+		width: 120px;
+		color: #444;
+		border-radius: 10px;
+		text-shadow: 3px 3px 5px #aaa;
+		box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+		transition: ease-in 0.2s;
+		padding: 40px;
+	}
+	.grid-container a {
+		text-decoration: none;
+		color: #333;
+	}
+	.grid-item h5 {
+		margin-bottom: 0;
+		font-size: 1.1rem;
+	}
+	.grid-item:hover {
+		transform: scale(140%);
+		background: linear-gradient(#090979,#00d4ff);
+		color: #eee;
+		border: 2px solid #eee;
+	}
+</style>
 
-Welcome to your new app.
+Welcome to the world of <h1><i>Ultimate Manager</i></h1>
+
+<div class="grid-container">
+	<a href="#">
+		<div class="grid-item">
+			<h5>Profile</h5>
+		</div>
+	</a>
+	<a href="#">
+		<div class="grid-item">
+			<h5>Start Game</h5>
+		</div>
+	</a>
+	<a href="#">
+		<div class="grid-item">
+			<h5>Load Game</h5>
+		</div>
+	</a>
+	<a href="#">
+		<div class="grid-item">
+			<h5>Results</h5>
+		</div>
+	</a>
+	<a href="#">
+		<div class="grid-item">
+			<h5>Schedule</h5>
+		</div>
+	</a>
+	<a href="#">
+		<div class="grid-item">
+			<h5>Statistics</h5>
+		</div>
+	</a>
+</div>
