@@ -1,0 +1,143 @@
+﻿@page "/playmatch"
+@using UltimateManager.Data.Repositories
+@using UltimateManager.Domain.Models
+@inject TeamRepository TeamRepository
+@inject PlayerRepository PlayerRepository
+
+<div class="dev-tools">
+	<h5> Dev Tools </h5>
+	@if (!startQuitMatchButtonClicked)
+	{
+		<div class="dev-teams">
+			Pick teams
+			<select @bind="selectedHomeTeamId">
+				<option value="">Home Team</option>
+				@foreach (var team in allTeams)
+				{
+					<option value="@team.Id">@team.Name</option>
+				}
+			</select>
+			<select @bind="selectedAwayTeamId">
+				<option value="">Away Team</option>
+				@foreach (var team in allTeams)
+				{
+					<option value="@team.Id">@team.Name</option>
+				}
+			</select>
+		</div>
+	}
+
+</div>
+<div class="game-wrapper">
+	<div class="game-content">
+
+		@if (!startQuitMatchButtonClicked)
+		{
+			<div class="game-menu">
+				<button class="btn btn-success" @onclick="StartQuitMatch"> Start Match </button>
+				<button class="btn btn-light"> Manage Team</button>
+			</div>
+		}
+		
+
+		@if (startQuitMatchButtonClicked)
+		{
+			<div class="game-main">
+				<div class="game-menu">
+					<button class="btn btn-danger" @onclick="StartQuitMatch"> Quit Match </button>
+					<button class="btn btn-light"> Manage Team</button>
+				</div>
+				<div class="game-scoreboard">
+					<div class="game-scoreboard-team team-home">@homeTeam.Name</div>
+					<div class="game-scoreboard-score">@homeScore</div>
+					<div class="game-scoreboard-score">@awayScore</div>
+					<div class="game-scoreboard-team team-away">@awayTeam.Name</div>
+				</div>
+				<div class="game-pitch">
+					pitch
+				</div>
+
+				<div class="game-events">
+					events
+				</div>
+				<div class="game-teams">
+					<div class="game-teams-home">
+						<h5>@homeTeam.Name @homeTeam.Overall</h5>
+						@foreach(var player in homeTeam.Players)
+						{
+							<div class="gt-player">
+								<span>#0</span>
+								<span>@player.LastName</span>
+								<span>G*</span>
+							</div>
+						}
+					</div>
+					<div class="game-teams-away">
+						<h5>@awayTeam.Name @awayTeam.Overall</h5>
+						@foreach (var player in awayTeam.Players)
+						{
+							<div class="gt-player">
+								<span>#0</span>
+								<span>@player.LastName</span>
+								<span>G*</span>
+							</div>
+						}
+					</div>
+				</div>
+			</div>
+		}
+		
+	</div>
+</div>
+
+@code {
+	private List<Team> allTeams = new();
+
+	private Team homeTeam = new();
+	private int homeScore;
+	private Team awayTeam = new();
+	private int awayScore;
+
+	private bool startQuitMatchButtonClicked = false;
+
+	private int selectedHomeTeamId;
+	private int selectedAwayTeamId;
+
+	protected override async Task OnInitializedAsync()
+	{
+		allTeams = await TeamRepository.GetAllTeamsAsync();
+		var teamsToRemove = new List<Team>();
+
+		foreach(var team in allTeams)
+		{
+			if (team.Players == null || team.Players.Count < 5)
+			{
+				teamsToRemove.Add(team);
+			}
+		}
+		foreach(var team in teamsToRemove)
+		{
+			allTeams.Remove(team);
+		}
+
+
+		// DEV INIT
+		homeTeam = allTeams.FirstOrDefault(t => t.Id == 10);
+		awayTeam = allTeams.FirstOrDefault(t => t.Id == 19);
+		startQuitMatchButtonClicked = true;
+	}
+
+	private void StartQuitMatch()
+	{
+		if (!startQuitMatchButtonClicked)
+		{
+			homeTeam = allTeams.FirstOrDefault(t => t.Id == selectedHomeTeamId);
+			awayTeam = allTeams.FirstOrDefault(t => t.Id == selectedAwayTeamId);
+			if(homeTeam == null)
+			{
+				return;
+			}
+		}
+		startQuitMatchButtonClicked = !startQuitMatchButtonClicked;
+	}
+}
