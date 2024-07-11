@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using UltimateManager.Data;
@@ -11,9 +12,11 @@ using UltimateManager.Data;
 namespace UltimateManager.Data.Migrations
 {
     [DbContext(typeof(UltimateManagerDbContext))]
-    partial class UltimateManagerDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240709053453_AddedNumberToPlayer")]
+    partial class AddedNumberToPlayer
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -198,10 +201,15 @@ namespace UltimateManager.Data.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("FirstName")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("LastName")
+                        .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<int?>("Number")
+                        .HasColumnType("integer");
 
                     b.Property<int?>("Overall")
                         .HasColumnType("integer");
@@ -211,14 +219,6 @@ namespace UltimateManager.Data.Migrations
 
                     b.Property<int?>("PlayerStatsId")
                         .HasColumnType("integer");
-
-                    b.Property<string>("ShirtName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("ShirtNumber")
-                        .IsRequired()
-                        .HasColumnType("text");
 
                     b.Property<int?>("TeamId")
                         .HasColumnType("integer");
@@ -435,9 +435,6 @@ namespace UltimateManager.Data.Migrations
                     b.Property<int?>("TeamStatsId")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("UserId")
-                        .HasColumnType("integer");
-
                     b.HasKey("Id");
 
                     b.HasIndex("CoachId")
@@ -478,37 +475,6 @@ namespace UltimateManager.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("TeamStats");
-                });
-
-            modelBuilder.Entity("UltimateManager.Domain.Models.User", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int?>("TeamId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("TeamId")
-                        .IsUnique();
-
-                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("MatchStatsBenchPlayer", b =>
@@ -664,16 +630,6 @@ namespace UltimateManager.Data.Migrations
                     b.Navigation("TeamStats");
                 });
 
-            modelBuilder.Entity("UltimateManager.Domain.Models.User", b =>
-                {
-                    b.HasOne("UltimateManager.Domain.Models.Team", "Team")
-                        .WithOne("User")
-                        .HasForeignKey("UltimateManager.Domain.Models.User", "TeamId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.Navigation("Team");
-                });
-
             modelBuilder.Entity("UltimateManager.Domain.Models.Coach", b =>
                 {
                     b.Navigation("Team");
@@ -694,8 +650,6 @@ namespace UltimateManager.Data.Migrations
             modelBuilder.Entity("UltimateManager.Domain.Models.Team", b =>
                 {
                     b.Navigation("Players");
-
-                    b.Navigation("User");
                 });
 #pragma warning restore 612, 618
         }

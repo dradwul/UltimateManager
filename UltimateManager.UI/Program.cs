@@ -1,6 +1,8 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using UltimateManager.Data;
 using UltimateManager.Data.Repositories;
+using UltimateManager.Domain.Interfaces;
 using UltimateManager.UI.Components;
 
 namespace UltimateManager.UI
@@ -26,8 +28,10 @@ namespace UltimateManager.UI
 
             builder.Services.AddScoped<PlayerRepository>();
             builder.Services.AddScoped<TeamRepository>();
+            builder.Services.AddScoped<MatchRepository>();
+			builder.Services.AddScoped<UserRepository>();
 
-            var app = builder.Build();
+			var app = builder.Build();
 
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())

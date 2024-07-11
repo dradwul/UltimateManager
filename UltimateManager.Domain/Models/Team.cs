@@ -12,5 +12,7 @@
         public int? TeamStatsId { get; set; }
         public TeamStats? TeamStats { get; set; }
         public ICollection<Player>? Players { get; set; }
+        public int? UserId { get; set; }
+        public User? User { get; set; }
     }
 }

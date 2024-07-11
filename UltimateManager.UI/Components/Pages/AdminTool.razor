@@ -3,6 +3,7 @@
 @using UltimateManager.Domain.Models
 @inject PlayerRepository PlayerRepository
 @inject TeamRepository TeamRepository
+@inject UserRepository UserRepository
 
 <h3>Admin Tool</h3>
 
@@ -33,7 +34,7 @@
 
 @if (newPositionButtonStatus)
 {
-	<form class="form-horizontal" @onsubmit="HandleSubmit">
+	<form class="form-horizontal" @onsubmit="HandlePositionSubmit">
 		<div class="mb-3">
 			<label for="newPositionType" class="form-label">Position Type</label>
 			<input type="text" class="form-control" id="newPositionType" @bind="newPosition.PositionType" required />
@@ -72,14 +73,92 @@
 }
 </div>
 
+<div class="admin-users" style="border:1px solid #ddd;padding:10px;">
+<h4>Users</h4>
+
+	<button class="btn btn-primary" @onclick="CreateUser">
+		@if (newUserButtonStatus)
+		{
+			<span> Cancel </span>
+		}
+		else
+		{
+			<span> New User </span>
+		}
+	</button>
+
+	<button class="btn btn-secondary" @onclick="ShowUsers">
+		@if (showUsers)
+		{
+			<span> Hide Users </span>
+		}
+		else
+		{
+			<span> Show Users </span>
+		}
+	</button>
+
+	@if (newUserButtonStatus)
+	{
+		<form class="form-horizontal" @onsubmit="HandleUserSubmit">
+			<div class="mb-3">
+				<label for="newUserName" class="form-label">Username</label>
+				<input type="text" class="form-control" id="newUsername" @bind="newUser.Name" required />
+			</div>
+			<div class="mb-3">
+				<label for="newUserPassword" class="form-label">Password</label>
+				<input type="password" class="form-control" id="newUserPassword" @bind="newUser.Password" required />
+			</div>
+			<div class="mb-3">
+				<label for="newUserEmail" class="form-label">Email</label>
+				<input type="email" class="form-control" id="newUserEmail" @bind="newUser.Email" required />
+			</div>
+			<button type="submit" class="btn btn-success">Save</button>
+		</form>
+	}
+
+	@if (allUsers.Any() && showUsers)
+	{
+		<table class="table">
+			<thead>
+				<tr>
+					<th>Id</th>
+					<th>Name</th>
+					<th>Password</th>
+					<th>Mail</th>
+				</tr>
+			</thead>
+			<tbody>
+				@foreach (var user in allUsers)
+				{
+					<tr>
+						<td>@user.Id</td>
+						<td>@user.Name</td>
+						<td>@user.Password</td>
+						<td>@user.Email</td>
+						<td>
+							<button class="btn btn-danger" @onclick="() => DeleteUser(user)">Delete</button>
+						</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	}
+</div>
+
+
 @code {
 	private List<Team> allTeams = new();
 	private List<Player> allPlayers = new();
 	private List<PlayerPosition> allPositions = new();
 	PlayerPosition newPosition = new();
-
 	private bool newPositionButtonStatus = false;
 	private bool showPositions = false;
+
+	private List<UltimateManager.Domain.Models.User> allUsers = new();
+	UltimateManager.Domain.Models.User newUser = new();
+	private bool newUserButtonStatus = false;
+	private bool showUsers = false;
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -96,7 +175,7 @@
 		showPositions = !showPositions;
 	}
 
-	private async Task HandleSubmit()
+	private async Task HandlePositionSubmit()
 	{
 		await AddPosition();
 	}
@@ -115,11 +194,41 @@
 		await LoadDataAsync();
 	}
 
+	private void CreateUser()
+	{
+		newUserButtonStatus = !newUserButtonStatus;
+	}
+
+	private void ShowUsers()
+	{
+		showUsers = !showUsers;
+	}
+
+	private async Task HandleUserSubmit()
+	{
+		await AddUser();
+	}
+
+	private async Task AddUser()
+	{
+		await UserRepository.AddUserAsync(newUser);
+		newUser = new();
+		newUserButtonStatus = false;
+		await LoadDataAsync();
+	}
+
+	private async Task DeleteUser(UltimateManager.Domain.Models.User user)
+	{
+		await UserRepository.DeleteUserAsync(user.Id);
+		await LoadDataAsync();
+	}
+
 	private async Task LoadDataAsync()
 	{
 		allTeams = await TeamRepository.GetAllTeamsAsync();
 		allPlayers = await PlayerRepository.GetAllPlayersAsync();
 		allPositions = await PlayerRepository.GetAllPositionsAsync();
+		allUsers = await UserRepository.GetAllUsersAsync();
 		StateHasChanged();
 	}
 }

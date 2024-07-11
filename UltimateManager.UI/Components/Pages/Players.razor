@@ -35,6 +35,10 @@
             <input type="text" class="form-control" id="newPlayerLastName" @bind-value="newPlayer.LastName" required />
         </div>
         <div class="mb-3">
+            <label for="newPlayerShirtName" class="form-label">Shirt Name</label>
+            <input type="text" class="form-control" id="newPlayerShirtName" @bind-value="newPlayer.ShirtName" required />
+        </div>
+        <div class="mb-3">
             <label for="newPlayerBirthYear" class="form-label">Year of Birth</label>
             <input type="number" class="form-control" id="newPlayerBirthYear" @bind-value="newPlayer.BirthYear" min="1900" max="@DateTime.Now.Year" required />
         </div>
@@ -87,7 +91,10 @@
                 </div>
 
             </div>
-
+        </div>
+        <div class="mb-3">
+            <label for="newPlayerShirtNumber" class="form-label">Shirt Number</label>
+            <input type="number" class="form-control" id="newPlayerShirtNumber" @bind-value="newPlayer.ShirtNumber" required />
         </div>
         <div class="mb-3">
             <label for="newPlayerTeam" class="form-label">Team</label>
@@ -139,6 +146,7 @@ else
     <table class="table">
         <thead>
             <tr>
+                <th>#</th>
                 <th> Name </th>
                 <th> Age </th>
                 <th> Overall </th>
@@ -151,7 +159,16 @@ else
             @foreach (var player in allPlayers)
             {
                 <tr>
-                    <td>@player.FirstName @player.LastName</td>
+                    <td>@player.ShirtNumber</td>
+                    <td>@if(player.ShirtName == null || player.ShirtName == "")
+                        {
+                            @player.LastName
+                        }
+                        else
+                        {
+                            @player.ShirtName
+                        }
+                    </td>
                     <td>@PlayerRepository.CalculateAge(player)</td>
                     <td>@player.Overall</td>
                     <td>@player.Team?.Name</td>

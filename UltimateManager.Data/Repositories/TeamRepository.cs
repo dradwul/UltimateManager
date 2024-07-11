@@ -20,6 +20,7 @@ namespace UltimateManager.Data.Repositories
         {
             return await _context.Teams
                 .Include(t => t.Players)
+                    .ThenInclude(p => p.PlayerPositions)
                 .ToListAsync();
         }
 

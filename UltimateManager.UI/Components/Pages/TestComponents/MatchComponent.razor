@@ -3,31 +3,8 @@
 @using UltimateManager.Domain.Models
 @inject TeamRepository TeamRepository
 @inject PlayerRepository PlayerRepository
+@inject MatchRepository MatchRepository
 
-<div class="dev-tools">
-	<h5> Dev Tools </h5>
-	@if (!startQuitMatchButtonClicked)
-	{
-		<div class="dev-teams">
-			Pick teams
-			<select @bind="selectedHomeTeamId">
-				<option value="">Home Team</option>
-				@foreach (var team in allTeams)
-				{
-					<option value="@team.Id">@team.Name</option>
-				}
-			</select>
-			<select @bind="selectedAwayTeamId">
-				<option value="">Away Team</option>
-				@foreach (var team in allTeams)
-				{
-					<option value="@team.Id">@team.Name</option>
-				}
-			</select>
-		</div>
-	}
-
-</div>
 <div class="game-wrapper">
 	<div class="game-content">
 
@@ -49,24 +26,126 @@
 				</div>
 				<div class="game-scoreboard">
 					<div class="game-scoreboard-team team-home">@homeTeam.Name</div>
-					<div class="game-scoreboard-score">@homeScore</div>
-					<div class="game-scoreboard-score">@awayScore</div>
+					<div class="game-scoreboard-score">@homeStats.Goals.Count</div>
+					<div class="game-scoreboard-score">@awayStats.Goals.Count</div>
 					<div class="game-scoreboard-team team-away">@awayTeam.Name</div>
 				</div>
-				<div class="game-pitch">
-					pitch
+				<div class="game-pitch-base">
+					<div class="game-pitch-inner">
+						<div class="game-zone">
+							@foreach(var player in homeStats.TeamSquad)
+							{
+								if(player.PlayerPositions.Any(pos => pos.PositionType == "Goalkeeper") && !renderedPlayers.Contains(player.Id))
+								{
+									<div class="game-player-cmpnt" style="background-color: @homeTeam.PrimaryColor;color: @homeTeam.SecondaryColor;">
+										@player.ShirtNumber @player.LastName
+									</div>
+									renderedPlayers.Add(player.Id);
+								}
+							}
+						</div>
+						<div class="game-zone">
+							@foreach (var player in homeStats.TeamSquad)
+							{
+								if (player.PlayerPositions.Any(pos => pos.PositionType == "Defender") && !renderedPlayers.Contains(player.Id))
+								{
+									<div class="game-player-cmpnt" style="background-color: @homeTeam.PrimaryColor;color: @homeTeam.SecondaryColor;">
+										@player.ShirtNumber @player.LastName
+									</div>
+									renderedPlayers.Add(player.Id);
+								}
+							}
+						</div>
+						<div class="game-zone">
+							@foreach (var player in homeStats.TeamSquad)
+							{
+								if (player.PlayerPositions.Any(pos => pos.PositionType == "Midfielder") && !renderedPlayers.Contains(player.Id))
+								{
+									<div class="game-player-cmpnt" style="background-color: @homeTeam.PrimaryColor;color: @homeTeam.SecondaryColor;">
+										@player.ShirtNumber @player.LastName
+									</div>
+									renderedPlayers.Add(player.Id);
+								}
+							}
+						</div>
+						<div class="game-zone">
+							@foreach (var player in homeStats.TeamSquad)
+							{
+								if (player.PlayerPositions.Any(pos => pos.PositionType == "Forward") && !renderedPlayers.Contains(player.Id))
+								{
+									<div class="game-player-cmpnt" style="background-color: @homeTeam.PrimaryColor;color: @homeTeam.SecondaryColor;">
+										@player.ShirtNumber @player.LastName
+									</div>
+									renderedPlayers.Add(player.Id);
+								}
+							}
+						</div>
+
+						<div class="game-zone-mid">
+							<div class="game-zone-mid-circle"></div>
+						</div>
+
+						<div class="game-zone">
+							@foreach (var player in awayStats.TeamSquad)
+							{
+								if (player.PlayerPositions.Any(pos => pos.PositionType == "Forward") && !renderedPlayers.Contains(player.Id))
+								{
+									<div class="game-player-cmpnt" style="background-color: @awayTeam.SecondaryColor;color: @awayTeam.PrimaryColor;">
+										@player.ShirtNumber @player.LastName
+									</div>
+									renderedPlayers.Add(player.Id);
+								}
+							}
+						</div>
+						<div class="game-zone">
+							@foreach (var player in awayStats.TeamSquad)
+							{
+								if (player.PlayerPositions.Any(pos => pos.PositionType == "Midfielder") && !renderedPlayers.Contains(player.Id))
+								{
+									<div class="game-player-cmpnt" style="background-color: @awayTeam.SecondaryColor;color: @awayTeam.PrimaryColor;">
+										@player.ShirtNumber @player.LastName
+									</div>
+									renderedPlayers.Add(player.Id);
+								}
+							}
+						</div>
+						<div class="game-zone">
+							@foreach (var player in awayStats.TeamSquad)
+							{
+								if (player.PlayerPositions.Any(pos => pos.PositionType == "Defender") && !renderedPlayers.Contains(player.Id))
+								{
+									<div class="game-player-cmpnt" style="background-color: @awayTeam.SecondaryColor;color: @awayTeam.PrimaryColor;">
+										@player.ShirtNumber @player.LastName
+									</div>
+									renderedPlayers.Add(player.Id);
+								}
+							}
+						</div>
+						<div class="game-zone">
+							@foreach (var player in awayStats.TeamSquad)
+							{
+								if (player.PlayerPositions.Any(pos => pos.PositionType == "Goalkeeper") && !renderedPlayers.Contains(player.Id))
+								{
+									<div class="game-player-cmpnt" style="background-color: @awayTeam.SecondaryColor;color: @awayTeam.PrimaryColor;">
+										@player.ShirtNumber @player.LastName
+									</div>
+									renderedPlayers.Add(player.Id);
+								}
+							}
+						</div>
+					</div>
 				</div>
 
 				<div class="game-events">
-					events
+					Match Events
 				</div>
 				<div class="game-teams">
 					<div class="game-teams-home">
 						<h5>@homeTeam.Name @homeTeam.Overall</h5>
-						@foreach(var player in homeTeam.Players)
+						@foreach(var player in homeStats.TeamSquad)
 						{
 							<div class="gt-player">
-								<span>#0</span>
+								<span>@player.ShirtNumber</span>
 								<span>@player.LastName</span>
 								<span>G*</span>
 							</div>
@@ -74,10 +153,10 @@
 					</div>
 					<div class="game-teams-away">
 						<h5>@awayTeam.Name @awayTeam.Overall</h5>
-						@foreach (var player in awayTeam.Players)
+						@foreach (var player in awayStats.TeamSquad)
 						{
 							<div class="gt-player">
-								<span>#0</span>
+								<span>@player.ShirtNumber</span>
 								<span>@player.LastName</span>
 								<span>G*</span>
 							</div>
@@ -94,9 +173,13 @@
 	private List<Team> allTeams = new();
 
 	private Team homeTeam = new();
-	private int homeScore;
 	private Team awayTeam = new();
-	private int awayScore;
+
+	private Match match = new();
+	private MatchStats homeStats = new();
+	private MatchStats awayStats = new();
+
+	private HashSet<int> renderedPlayers = new(); // Track rendered players
 
 	private bool startQuitMatchButtonClicked = false;
 
@@ -106,25 +189,66 @@
 	protected override async Task OnInitializedAsync()
 	{
 		allTeams = await TeamRepository.GetAllTeamsAsync();
-		var teamsToRemove = new List<Team>();
+		FilterTeams();
+		InitializeDevTeams();
+	}
 
-		foreach(var team in allTeams)
+	private void FilterTeams()
+	{
+		allTeams = allTeams.Where(team => team.Players != null && team.Players.Count >= 5).ToList();
+	}
+
+	private void InitializeDevTeams()
+	{
+		homeTeam = allTeams.FirstOrDefault(t => t.Id == 10); //spain(id 10)
+		awayTeam = allTeams.FirstOrDefault(t => t.Id == 20); //argentina(id 19),sporting(id 20)
+
+		if(homeTeam == null || awayTeam == null)
 		{
-			if (team.Players == null || team.Players.Count < 5)
+			startQuitMatchButtonClicked = false;
+			return;
+		}
+
+		homeStats.TeamSquad = SelectPlayersForMatch(homeTeam);
+		awayStats.TeamSquad = SelectPlayersForMatch(awayTeam);
+
+		startQuitMatchButtonClicked = true;
+	}
+
+	private List<Player> SelectPlayersForMatch(Team team)
+	{
+		var selectedPlayers = new List<Player>();
+		var addedPlayers = new HashSet<int>();
+
+		if (team?.Players == null)
+		{
+			return selectedPlayers;
+		}
+
+		var positionPriority = new List<string> { "Goalkeeper", "Defender", "Midfielder", "Forward" };
+
+		foreach (var position in positionPriority)
+		{
+			var playersInPosition = team.Players.Where(p => p.PlayerPositions.Any(pos => pos.PositionType == position) && !addedPlayers.Contains(p.Id)).ToList();
+
+			int maxPlayers = position switch
 			{
-				teamsToRemove.Add(team);
+				"Goalkeeper" => 1,
+				"Defender" => 4,
+				"Midfielder" => 4,
+				"Forward" => 2,
+				_ => 0
+			};
+
+			var playersToAdd = playersInPosition.Take(maxPlayers).ToList();
+			selectedPlayers.AddRange(playersToAdd);
+			foreach (var player in playersToAdd)
+			{
+				addedPlayers.Add(player.Id);
 			}
 		}
-		foreach(var team in teamsToRemove)
-		{
-			allTeams.Remove(team);
-		}
 
-
-		// DEV INIT
-		homeTeam = allTeams.FirstOrDefault(t => t.Id == 10);
-		awayTeam = allTeams.FirstOrDefault(t => t.Id == 19);
-		startQuitMatchButtonClicked = true;
+		return selectedPlayers;
 	}
 
 	private void StartQuitMatch()
@@ -133,7 +257,7 @@
 		{
 			homeTeam = allTeams.FirstOrDefault(t => t.Id == selectedHomeTeamId);
 			awayTeam = allTeams.FirstOrDefault(t => t.Id == selectedAwayTeamId);
-			if(homeTeam == null)
+			if (homeTeam == null || awayTeam == null)
 			{
 				return;
 			}
@@ -141,3 +265,4 @@
 		startQuitMatchButtonClicked = !startQuitMatchButtonClicked;
 	}
 }
+
