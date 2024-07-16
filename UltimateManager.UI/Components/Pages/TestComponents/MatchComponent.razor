@@ -30,6 +30,10 @@
 					<div class="game-scoreboard-score">@awayStats.Goals.Count</div>
 					<div class="game-scoreboard-team team-away">@awayTeam.Name</div>
 				</div>
+				<div class="game-formations">
+					<div class="game-scoreboard-formation">3-5-2</div>
+					<div class="game-scoreboard-formation">4-2-4</div>
+				</div>
 				<div class="game-pitch-base">
 					<div class="game-pitch-inner">
 						<div class="game-zone">
@@ -38,7 +42,8 @@
 								if(player.PlayerPositions.Any(pos => pos.PositionType == "Goalkeeper") && !renderedPlayers.Contains(player.Id))
 								{
 									<div class="game-player-cmpnt" style="background-color: @homeTeam.PrimaryColor;color: @homeTeam.SecondaryColor;">
-										@player.ShirtNumber @player.LastName
+										<span class="gpc-number">@player.ShirtNumber</span>
+										<span class="gpc-name">@player.LastName</span>
 									</div>
 									renderedPlayers.Add(player.Id);
 								}
@@ -50,7 +55,8 @@
 								if (player.PlayerPositions.Any(pos => pos.PositionType == "Defender") && !renderedPlayers.Contains(player.Id))
 								{
 									<div class="game-player-cmpnt" style="background-color: @homeTeam.PrimaryColor;color: @homeTeam.SecondaryColor;">
-										@player.ShirtNumber @player.LastName
+										<span class="gpc-number">@player.ShirtNumber</span>
+										<span class="gpc-name">@player.LastName</span>
 									</div>
 									renderedPlayers.Add(player.Id);
 								}
@@ -62,7 +68,8 @@
 								if (player.PlayerPositions.Any(pos => pos.PositionType == "Midfielder") && !renderedPlayers.Contains(player.Id))
 								{
 									<div class="game-player-cmpnt" style="background-color: @homeTeam.PrimaryColor;color: @homeTeam.SecondaryColor;">
-										@player.ShirtNumber @player.LastName
+										<span class="gpc-number">@player.ShirtNumber</span>
+										<span class="gpc-name">@player.LastName</span>
 									</div>
 									renderedPlayers.Add(player.Id);
 								}
@@ -74,7 +81,8 @@
 								if (player.PlayerPositions.Any(pos => pos.PositionType == "Forward") && !renderedPlayers.Contains(player.Id))
 								{
 									<div class="game-player-cmpnt" style="background-color: @homeTeam.PrimaryColor;color: @homeTeam.SecondaryColor;">
-										@player.ShirtNumber @player.LastName
+										<span class="gpc-number">@player.ShirtNumber</span>
+										<span class="gpc-name">@player.LastName</span>
 									</div>
 									renderedPlayers.Add(player.Id);
 								}
@@ -91,7 +99,8 @@
 								if (player.PlayerPositions.Any(pos => pos.PositionType == "Forward") && !renderedPlayers.Contains(player.Id))
 								{
 									<div class="game-player-cmpnt" style="background-color: @awayTeam.SecondaryColor;color: @awayTeam.PrimaryColor;">
-										@player.ShirtNumber @player.LastName
+										<span class="gpc-number">@player.ShirtNumber</span>
+										<span class="gpc-name">@player.LastName</span>
 									</div>
 									renderedPlayers.Add(player.Id);
 								}
@@ -103,7 +112,8 @@
 								if (player.PlayerPositions.Any(pos => pos.PositionType == "Midfielder") && !renderedPlayers.Contains(player.Id))
 								{
 									<div class="game-player-cmpnt" style="background-color: @awayTeam.SecondaryColor;color: @awayTeam.PrimaryColor;">
-										@player.ShirtNumber @player.LastName
+										<span class="gpc-number">@player.ShirtNumber</span>
+										<span class="gpc-name">@player.LastName</span>
 									</div>
 									renderedPlayers.Add(player.Id);
 								}
@@ -115,7 +125,8 @@
 								if (player.PlayerPositions.Any(pos => pos.PositionType == "Defender") && !renderedPlayers.Contains(player.Id))
 								{
 									<div class="game-player-cmpnt" style="background-color: @awayTeam.SecondaryColor;color: @awayTeam.PrimaryColor;">
-										@player.ShirtNumber @player.LastName
+										<span class="gpc-number">@player.ShirtNumber</span>
+										<span class="gpc-name">@player.LastName</span>
 									</div>
 									renderedPlayers.Add(player.Id);
 								}
@@ -127,7 +138,8 @@
 								if (player.PlayerPositions.Any(pos => pos.PositionType == "Goalkeeper") && !renderedPlayers.Contains(player.Id))
 								{
 									<div class="game-player-cmpnt" style="background-color: @awayTeam.SecondaryColor;color: @awayTeam.PrimaryColor;">
-										@player.ShirtNumber @player.LastName
+										<span class="gpc-number">@player.ShirtNumber</span>
+										<span class="gpc-name">@player.LastName</span>
 									</div>
 									renderedPlayers.Add(player.Id);
 								}
@@ -201,7 +213,7 @@
 	private void InitializeDevTeams()
 	{
 		homeTeam = allTeams.FirstOrDefault(t => t.Id == 10); //spain(id 10)
-		awayTeam = allTeams.FirstOrDefault(t => t.Id == 20); //argentina(id 19),sporting(id 20)
+		awayTeam = allTeams.FirstOrDefault(t => t.Id == 1); //argentina(id 19),sporting(id 20),swe(1)
 
 		if(homeTeam == null || awayTeam == null)
 		{
@@ -220,7 +232,7 @@
 		var selectedPlayers = new List<Player>();
 		var addedPlayers = new HashSet<int>();
 
-		if (team?.Players == null)
+		if (team.Players == null)
 		{
 			return selectedPlayers;
 		}
@@ -229,7 +241,7 @@
 
 		foreach (var position in positionPriority)
 		{
-			var playersInPosition = team.Players.Where(p => p.PlayerPositions.Any(pos => pos.PositionType == position) && !addedPlayers.Contains(p.Id)).ToList();
+			var playersInPosition = team.Players.OrderBy(p => p.Overall).Where(p => p.PlayerPositions.Any(pos => pos.PositionType == position) && !addedPlayers.Contains(p.Id)).ToList();
 
 			int maxPlayers = position switch
 			{

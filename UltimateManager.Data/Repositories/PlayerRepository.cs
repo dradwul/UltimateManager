@@ -35,6 +35,12 @@ namespace UltimateManager.Data.Repositories
             await _context.SaveChangesAsync();
         }
 
+        public async Task UpdatePlayerAsync(Player player)
+        {
+            _context.Players.Update(player);
+            await _context.SaveChangesAsync();
+        }
+
         public async Task DeletePlayerAsync(Player player)
         {
             _context.Remove(player);

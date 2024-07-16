@@ -17,6 +17,15 @@ namespace UltimateManager.Data.Repositories
 			return await _context.Users.Include(u => u.Team).ToListAsync();
 		}
 
+		public async Task<User> GetUserByEmailAsync(string email)
+		{
+			return await _context.Users.SingleOrDefaultAsync(user => user.Email == email);
+		}
+		public async Task<User> GetUserByUsernameAsync(string username)
+		{
+			return await _context.Users.SingleOrDefaultAsync(user => user.Name == username);
+		}
+
 		public async Task<User> GetUserByIdAsync(int userId)
 		{
 			return await _context.Users

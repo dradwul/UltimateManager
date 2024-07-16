@@ -155,8 +155,8 @@
 	private bool newPositionButtonStatus = false;
 	private bool showPositions = false;
 
-	private List<UltimateManager.Domain.Models.User> allUsers = new();
-	UltimateManager.Domain.Models.User newUser = new();
+	private List<User> allUsers = new();
+	User newUser = new();
 	private bool newUserButtonStatus = false;
 	private bool showUsers = false;
 
@@ -217,7 +217,7 @@
 		await LoadDataAsync();
 	}
 
-	private async Task DeleteUser(UltimateManager.Domain.Models.User user)
+	private async Task DeleteUser(User user)
 	{
 		await UserRepository.DeleteUserAsync(user.Id);
 		await LoadDataAsync();
